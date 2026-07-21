@@ -1,0 +1,158 @@
+Application
+1.angular page(Front End)
+2.nodejs server.js(Back end)
+3.postgresql(DB)
+
+List of available Pages
+Registration page
+Login Page
+Pasword reset Page
+Dashboard Page
+Automation Page
+
+--TODO
+Admin Monitoring user page
+  - List of active user
+  - Task monitoring based on user
+  - user status
+  - department
+  - user with Granted page access
+  - screen to provide access to user
+
+Manager- monitoring
+
+  - Task Performed by user
+  - weekly report
+  - Status of the task
+  
+  
+Task Scheduling
+
+access  - Manager & Team Lead
+
+    - Task details
+	- time line(define completion date)
+	- status
+	- trigger email if not completed on end date
+	- followup alerts
+	
+	
+BA 
+
+   Task schedule
+   timeline monitoring
+   status update
+   Trigger ALerts
+   Export status report
+
+   
+      
+	
+  
+
+Tasks
+
+postgresql - installation
+
+ALTER TABLE users ADD COLUMN password_last_changed TIMESTAMP DEFAULT NOW();
+
+table creation - 
+
+table- sb_user_det
+
+smartbot_db=# \d sb_user_det;
+                                                Table "public.sb_user_det"
+        Column         |            Type             | Collation | Nullable |                   Default
+-----------------------+-----------------------------+-----------+----------+---------------------------------------------
+ emp_id                | integer                     |           | not null | nextval('sb_user_det_emp_id_seq'::regclass)
+ first_name            | character varying(100)      |           |          |
+ last_name             | character varying(100)      |           |          |
+ role                  | character varying(50)       |           |          |
+ dept                  | character varying(50)       |           |          |
+ email_address         | character varying(50)       |           |          |
+ phone_no              | character varying(50)       |           |          |
+ user_pw               | character varying(100)      |           |          |
+ created_dt            | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+ profile_picture       | character varying(255)      |           |          |
+ password_last_changed | timestamp without time zone |           |          | now()
+Indexes:
+    "sb_user_det_pkey" PRIMARY KEY, btree (emp_id)
+
+
+
+Note: need to update password_last_changed  in sb_user_det whenever user reset pw
+
+
+
+
+API's
+1, login
+2, upload profile picture & load Profile pic
+3, display task list
+4, report display for 1 week transactions
+5, cuulative report
+6, Display ALerts
+
+
+UI
+display logo
+user profile
+sidebar to display Dashboard & Automation
+dashboard Page
+ - > Pie chart
+ --> BAr Chart
+ --> Activity history
+ 
+Automation Tasks page
+ display messages
+ display Process.. icon
+ 
+get data from ISF and display in pie & bar chart
+
+user creation page 
+add login or New user creation in mat-icon
+
+
+
+upload Profile picture logic
+
+
+below are the process steps
+----------------------------
+step:1
+profile picture loading and preview in angular page
+step:2
+upload profile picture in angular application, 
+step:3
+it will call API end point from backend(server.js) 
+step:4
+API will update the profile picture in postgre sql, 
+step:5
+once it's updated API will return profile picture as response file to angular 
+step:6
+angular page will display profile picture
+
+
+
+it takes more than 1 minute to complete the above action, need to identify excatly where it's consuming more time during this process
+
+RULES
+------
+Need to define
+
+
+
+Access related items
+
+1. Admin only can register new user and reset password for user
+2. password should expiry in 90 days and send notification to user, upon password expiry user should be able to reset password by their own or with admin help
+
+Role based access
+
+Specific people only can view Cumulative Dashboard
+
+user should be able to view Dashboard with limited content based on their role
+Automation page access - all user based on their role and department.
+
+application can be used only when they connected with MCIS domain
+ 
