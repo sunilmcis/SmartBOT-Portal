@@ -1,0 +1,70 @@
+<h2 mat-dialog-title>Update Profile Picture</h2>
+
+<mat-dialog-content>
+<!--  <input type="file" (change)="onFileSelected($event)" accept="image/*" />-->
+  <input type="file" (change)="onFileSelected($event)" [disabled]="previewInProgress" accept="image/*" />
+
+  <div *ngIf="previewUrl">
+    <h3>Preview:</h3>
+<!--    <img [src]="previewUrl" alt="Preview" width="150" />-->
+<!--    <img [src]="previewUrl" alt="Preview" style="max-width: 200px; max-height: 200px; object-fit: cover;" />-->
+<!--    <img [src]="previewUrl" loading="eager" alt="Preview" style="max-width: 200px; max-height: 200px; object-fit: cover;" />-->
+    <img [src]="previewUrl" alt="Preview" width="150" />
+
+  </div>
+</mat-dialog-content>
+
+
+<!--<mat-dialog-actions align="end">-->
+<!--  <button mat-button (click)="onNoClick()">Cancel</button>-->
+<!--&lt;!&ndash;  <button mat-button (click)="uploadImage()">Upload</button>&ndash;&gt;-->
+<!--&lt;!&ndash;  <button mat-button (click)="uploadProfile()">Upload</button>&ndash;&gt;-->
+<!--  <button mat-raised-button color="primary" (click)="uploadProfile()" [disabled]="uploadInProgress">-->
+<!--    <mat-progress-spinner *ngIf="uploadInProgress" diameter="20" mode="indeterminate"></mat-progress-spinner>-->
+<!--    <span *ngIf="!uploadInProgress">Upload</span>-->
+<!--  </button>-->
+<!--</mat-dialog-actions>-->
+
+
+<mat-dialog-actions align="end">
+
+  <button mat-button (click)="onNoClick()">Cancel</button>
+
+  <!-- Show only spinner during preview processing -->
+  <div *ngIf="previewInProgress" style="display: flex; align-items: center; gap: 8px;">
+    <mat-progress-spinner diameter="24" mode="indeterminate" color="primary"></mat-progress-spinner>
+    <span>Preparing image...</span>
+  </div>
+
+  <!-- Show Upload button only after preview is done -->
+  <button
+    *ngIf="!previewInProgress"
+    mat-raised-button
+    color="primary"
+    (click)="uploadProfile()"
+    [disabled]="uploadInProgress"
+    style="display: flex; align-items: center;"
+  >
+    <mat-progress-spinner
+      *ngIf="uploadInProgress"
+      diameter="20"
+      mode="indeterminate"
+      color="accent"
+      style="margin-right: 8px;"
+    ></mat-progress-spinner>
+    <span *ngIf="!uploadInProgress">Upload</span>
+    <span *ngIf="uploadInProgress">Uploading...</span>
+  </button>
+
+</mat-dialog-actions>
+
+
+
+
+
+<!--<form (ngSubmit)="uploadProfile()" enctype="multipart/form-data">-->
+<!--  <input type="text" [(ngModel)]="username" name="username" placeholder="Username" required>-->
+<!--  <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required>-->
+<!--  <input type="file" (change)="onFileSelected($event)" required>-->
+<!--  <button type="submit">Upload</button>-->
+<!--</form>-->

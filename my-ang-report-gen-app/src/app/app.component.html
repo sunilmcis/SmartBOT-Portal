@@ -1,0 +1,310 @@
+
+<div class="dashboard-container">
+  <aside class="sidebar">
+    <div class="logo">TM</div>
+    <nav class="menu">
+      <a routerLink="/report" routerLinkActive="active">Reports</a>
+<!--      <a routerLink="/dashboard" routerLinkActive="active">Reports</a>-->
+    </nav>
+  </aside>
+
+
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Report Generator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    * {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f6fa;
+  height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 240px;
+  background: linear-gradient(to bottom, #6a1b9a, #4a148c);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+  width: 100%;
+  height: 140px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-top-right-radius: 20px;
+}
+
+.logo-container img {
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+}
+
+.sidebar h2 {
+  font-size: 18px;
+  margin: 15px 0;
+  font-weight: 600;
+}
+
+.sidebar a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  transition: background 0.3s;
+  border-radius: 10px;
+}
+
+.sidebar a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f6fa;
+}
+
+.header {
+  background: linear-gradient(to right, #6a1b9a, #0077C8);
+  padding: 30px 40px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  border-bottom-left-radius: 20px;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.container {
+  padding: 40px;
+  max-width: 500px;
+  margin: 60px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.container h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  color: #444;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+  border-color: #6a1b9a;
+  outline: none;
+}
+
+button {
+  padding: 12px 24px;
+  background-color: #6a1b9a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  float: right;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #4a148c;
+  transform: scale(1.03);
+}
+
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-radius: 0;
+  }
+
+  .main {
+    width: 100%;
+  }
+
+  .container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .header {
+    border-radius: 0;
+  }
+}
+    #category {
+        width: 400px; /* Set width to 300 pixels */
+        height: 50px; /* Set height to 40 pixels */
+      }
+
+  </style>
+</head>
+<body>
+<router-outlet></router-outlet>
+<div class="sidebar">
+  <div class="logo-container">
+    <img src="assets/MCIS.png" alt="MCIS Logo">
+  </div>
+  <h2>Menu</h2>
+  <a href="#">Dashboard</a>
+  <a href="#">Reports</a>
+  <a href="#">Settings</a>
+  <a href="#">Logout</a>
+</div>
+
+<div class="main">
+  <div class="header">
+    <h1>MCIS Report Portal</h1>
+  </div>
+  <input [(colorPicker)]="color" [style.background]="color"/>
+  <div class="container">
+    <h2>Generate Report</h2>
+    <form>
+      <div class="form-group">
+        <label for="category">Report Category</label>
+        <select
+          id="category"
+          name="category"
+          [(ngModel)]="selectedCategory"
+          (change)="onCategoryChange($event)"
+          required
+          style="width: 400px; height: 50px;"
+        >
+          <option *ngFor="let item of items" [value]="item.value">{{ item.label }}</option>
+        </select>
+      </div>
+-->
+<!--      <div class="form-group">-->
+<!--        <label for="parameter">Parameter</label>-->
+<!--        <select-->
+<!--          id="parameter"-->
+<!--          name="parameter"-->
+<!--          [(ngModel)]="selectedParameter"-->
+<!--          [disabled]="!parameters.length"-->
+<!--          required-->
+<!--          style="width: 400px; height: 50px;"-->
+<!--        >-->
+<!--          <option *ngFor="let param of parameters" [value]="param.value">{{ param.value }}</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--
+      <div class="form-group">
+        <label>Please key-in below Parameters</label>
+        <p style="width: 350px; height: 100px; line-height: 50px; padding-left: 10px; border: 1px solid #ccc; border-radius: 6px; background-color: #f9f9f9;">
+          {{ parameterText }}
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="noteBox">Please Key-in parameters seperated by comma</label>
+        <textarea
+
+          id="noteBox"
+          [(ngModel)]="noteContent"
+          name="noteContent"
+          rows="6"
+          style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;"
+          placeholder="Type your notes here..."
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <button type="button" (click)="saveNote()">Save as Notepad</button>
+      </div>
+
+-->
+
+<!--      <div class="form-group">-->
+<!--        <label for="startDate">Start Date</label>-->
+<!--        <input type="date" id="startDate" name="startDate">-->
+<!--      </div>-->
+
+<!--      <div class="form-group">-->
+<!--        <label for="endDate">End Date</label>-->
+<!--        <input type="date" id="endDate" name="endDate">-->
+<!--      </div>-->
+
+<!--      <div class="form-group">-->
+<!--        <label for="category">Report Category</label>-->
+<!--        <select id="category" name="category">-->
+<!--          <option value="">&#45;&#45; Select &#45;&#45;</option>-->
+<!--          &lt;!&ndash; Replace with real options &ndash;&gt;-->
+<!--          <option value="category1">Category 1</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+
+
+</div>
+
+</body>
+</html>
+-->

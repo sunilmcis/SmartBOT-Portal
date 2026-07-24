@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Task History</h2>
+<mat-dialog-content>
+  <div *ngIf="history.length; else noHistory">
+    <mat-list>
+      <mat-list-item *ngFor="let h of history">
+        <div>
+          <strong>{{ h.updated_by }}</strong> updated this on
+          {{ h.updated_at | date: 'short' }}<br />
+          <span *ngIf="h.prev_status !== h.new_status">Status changed: {{ h.prev_status }} → {{ h.new_status }}</span><br />
+          <span *ngIf="h.prev_title !== h.new_title">Title changed: {{ h.prev_title }} → {{ h.new_title }}</span><br />
+          <span *ngIf="h.prev_description !== h.new_description">Description changed.</span>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <ng-template #noHistory>No history available.</ng-template>
+</mat-dialog-content>

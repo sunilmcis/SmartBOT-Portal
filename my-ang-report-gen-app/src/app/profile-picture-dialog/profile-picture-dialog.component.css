@@ -1,0 +1,8 @@
+<div style="display: flex; align-items: center; gap: 8px;">
+  <mat-progress-spinner *ngIf="uploadInProgress || previewInProgress"
+                        diameter="20"
+                        mode="indeterminate"
+                        color="primary">
+  </mat-progress-spinner>
+  <span *ngIf="!uploadInProgress && !previewInProgress">Upload</span>
+</div>

@@ -1,0 +1,836 @@
+<div class="billing-page">
+
+  <!-- =====================================================
+       PAGE BANNER
+  ====================================================== -->
+  <section class="page-banner">
+    <div class="banner-content">
+      <span class="module-label">Finance Operations</span>
+
+      <h1>Group Billing</h1>
+
+      <p>
+        Upload the approved Group Billing input file, validate the
+        records, generate the billing output and create the related
+        tax invoices.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="banner-button"
+      [disabled]="isProcessing"
+      (click)="resetProcess()">
+      <mat-icon>refresh</mat-icon>
+      New Process
+    </button>
+  </section>
+
+  <!-- =====================================================
+       SUMMARY CARDS
+  ====================================================== -->
+  <section class="summary-grid">
+
+    <article class="summary-card">
+      <div class="summary-icon blue">
+        <mat-icon>table_rows</mat-icon>
+      </div>
+
+      <div>
+        <span>Total Records</span>
+        <strong>{{ totalRecords }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon green">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+
+      <div>
+        <span>Valid Records</span>
+        <strong>{{ validRecords }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon red">
+        <mat-icon>cancel</mat-icon>
+      </div>
+
+      <div>
+        <span>Rejected Records</span>
+        <strong>{{ rejectedRecords }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon purple">
+        <mat-icon>receipt_long</mat-icon>
+      </div>
+
+      <div>
+        <span>Tax Invoices</span>
+        <strong>{{ taxInvoiceCount }}</strong>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- =====================================================
+       MAIN GRID
+  ====================================================== -->
+  <section class="main-grid">
+
+    <!-- ===================================================
+         LEFT COLUMN
+    ==================================================== -->
+    <div class="left-column">
+
+      <!-- UPLOAD CARD -->
+      <article class="panel">
+
+        <div class="panel-header">
+          <div>
+            <span class="step-label">Step 1</span>
+            <h2>Upload Group Billing File</h2>
+
+            <p>
+              Select the Excel or CSV file that will be processed by
+              Billing.py.
+            </p>
+          </div>
+
+          <mat-icon class="panel-header-icon">
+            cloud_upload
+          </mat-icon>
+        </div>
+
+        <div
+          class="upload-zone"
+          [class.dragging]="isDragging"
+          [class.has-file]="selectedFile"
+          [class.disabled]="isProcessing"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onFileDrop($event)">
+
+          <input
+            #billingFileInput
+            type="file"
+            hidden
+            accept=".xlsx,.xls,.csv"
+            [disabled]="isProcessing"
+            (change)="onFileSelected($event)">
+
+          <!-- NO FILE SELECTED -->
+          <ng-container *ngIf="!selectedFile">
+
+            <div class="upload-icon">
+              <mat-icon>upload_file</mat-icon>
+            </div>
+
+            <h3>Drag and drop your billing file here</h3>
+
+            <p>
+              Supported file types: XLSX, XLS and CSV
+            </p>
+
+            <button
+              type="button"
+              class="primary-button"
+              [disabled]="isProcessing"
+              (click)="billingFileInput.click()">
+              <mat-icon>folder_open</mat-icon>
+              Browse File
+            </button>
+
+            <span class="file-note">
+              Maximum file size: {{ maxFileSizeMb }} MB
+            </span>
+
+          </ng-container>
+
+          <!-- FILE SELECTED -->
+          <ng-container *ngIf="selectedFile">
+
+            <div class="selected-file">
+
+              <div class="file-icon">
+                <mat-icon>description</mat-icon>
+              </div>
+
+              <div class="file-information">
+                <strong>{{ selectedFile.name }}</strong>
+                <span>{{ formatFileSize(selectedFile.size) }}</span>
+
+                <small>
+                  <mat-icon>check_circle</mat-icon>
+                  Ready for processing
+                </small>
+              </div>
+
+              <button
+                type="button"
+                class="remove-button"
+                matTooltip="Remove selected file"
+                [disabled]="isProcessing"
+                (click)="removeFile(billingFileInput)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+
+            </div>
+
+          </ng-container>
+
+        </div>
+
+        <div class="information-box">
+          <mat-icon>info</mat-icon>
+
+          <div>
+            <strong>Input file requirements</strong>
+
+            <p>
+              The uploaded file must follow the approved Group Billing
+              template and contain all mandatory billing fields.
+            </p>
+          </div>
+        </div>
+
+        <!-- BILLING PARAMETERS -->
+        <div class="billing-parameters">
+
+          <div class="parameter-heading">
+            <div>
+              <span class="step-label">Required Information</span>
+              <h3>Billing Parameters</h3>
+
+              <p>
+                Enter the base policy number, select the required products,
+                and provide a bill number for each selected product.
+              </p>
+            </div>
+
+            <mat-icon>tune</mat-icon>
+          </div>
+
+          <!-- BASE POLICY NUMBER -->
+          <div class="policy-number-row">
+            <div class="form-field">
+              <label for="policyNo">
+                Base Policy Number
+                <span class="required">*</span>
+              </label>
+
+              <input
+                id="policyNo"
+                name="policyNo"
+                type="text"
+                [(ngModel)]="policyNo"
+                [disabled]="isProcessing"
+                placeholder="Example: GMS2518"
+                autocomplete="off">
+
+              <small>
+                The Python scripts automatically create the policy numbers
+                by adding -GTL, -GHS and -GOP to this base policy number.
+              </small>
+            </div>
+          </div>
+
+          <!-- PRODUCT SELECTION -->
+          <div class="product-selection-grid">
+
+            <!-- GTL -->
+            <section
+              class="product-selection-card"
+              [class.selected]="processGTL">
+
+              <label class="product-checkbox">
+                <input
+                  type="checkbox"
+                  name="processGTL"
+                  [(ngModel)]="processGTL"
+                  [disabled]="isProcessing"
+                  (change)="onProductSelectionChange('GTL')">
+
+                <span class="custom-checkbox">
+                  <mat-icon *ngIf="processGTL">check</mat-icon>
+                </span>
+
+                <span class="product-information">
+                  <strong>GTL</strong>
+                  <small>Group Term Life</small>
+                </span>
+              </label>
+
+              <div
+                class="bill-number-container"
+                *ngIf="processGTL">
+
+                <div class="form-field">
+                  <label for="billNoGTL">
+                    GTL Bill Number
+                    <span class="required">*</span>
+                  </label>
+
+                  <input
+                    id="billNoGTL"
+                    name="billNoGTL"
+                    type="text"
+                    [(ngModel)]="billNoGTL"
+                    [disabled]="isProcessing"
+                    placeholder="Enter GTL bill number"
+                    autocomplete="off">
+                </div>
+              </div>
+            </section>
+
+            <!-- GHS -->
+            <section
+              class="product-selection-card"
+              [class.selected]="processGHS">
+
+              <label class="product-checkbox">
+                <input
+                  type="checkbox"
+                  name="processGHS"
+                  [(ngModel)]="processGHS"
+                  [disabled]="isProcessing"
+                  (change)="onProductSelectionChange('GHS')">
+
+                <span class="custom-checkbox">
+                  <mat-icon *ngIf="processGHS">check</mat-icon>
+                </span>
+
+                <span class="product-information">
+                  <strong>GHS</strong>
+                  <small>Group Hospitalisation</small>
+                </span>
+              </label>
+
+              <div
+                class="bill-number-container"
+                *ngIf="processGHS">
+
+                <div class="form-field">
+                  <label for="billNoGHS">
+                    GHS Bill Number
+                    <span class="required">*</span>
+                  </label>
+
+                  <input
+                    id="billNoGHS"
+                    name="billNoGHS"
+                    type="text"
+                    [(ngModel)]="billNoGHS"
+                    [disabled]="isProcessing"
+                    placeholder="Enter GHS bill number"
+                    autocomplete="off">
+                </div>
+              </div>
+            </section>
+
+            <!-- GOP -->
+            <section
+              class="product-selection-card"
+              [class.selected]="processGOP">
+
+              <label class="product-checkbox">
+                <input
+                  type="checkbox"
+                  name="processGOP"
+                  [(ngModel)]="processGOP"
+                  [disabled]="isProcessing"
+                  (change)="onProductSelectionChange('GOP')">
+
+                <span class="custom-checkbox">
+                  <mat-icon *ngIf="processGOP">check</mat-icon>
+                </span>
+
+                <span class="product-information">
+                  <strong>GOP</strong>
+                  <small>Group Outpatient</small>
+                </span>
+              </label>
+
+              <div
+                class="bill-number-container"
+                *ngIf="processGOP">
+
+                <div class="form-field">
+                  <label for="billNoGOP">
+                    GOP Bill Number
+                    <span class="required">*</span>
+                  </label>
+
+                  <input
+                    id="billNoGOP"
+                    name="billNoGOP"
+                    type="text"
+                    [(ngModel)]="billNoGOP"
+                    [disabled]="isProcessing"
+                    placeholder="Enter GOP bill number"
+                    autocomplete="off">
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+        <div
+          class="error-box"
+          *ngIf="errorMessage">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <div class="action-row">
+          <button
+            type="button"
+            class="primary-button process-button"
+            [disabled]="
+              !selectedFile ||
+              !policyNo.trim() ||
+              (!processGTL && !processGHS && !processGOP) ||
+              isProcessing
+            "
+            (click)="startBillingProcess()">
+
+            <mat-icon *ngIf="!isProcessing">
+              play_arrow
+            </mat-icon>
+
+            <span
+              class="spinner"
+              *ngIf="isProcessing">
+            </span>
+
+            {{
+            isProcessing
+            ? 'Processing Billing...'
+            : 'Validate & Generate Billing'
+            }}
+          </button>
+        </div>
+
+      </article>
+
+      <!-- PROCESS PROGRESS -->
+      <article
+        class="panel"
+        *ngIf="processStarted">
+
+        <div class="panel-header">
+          <div>
+            <span class="step-label">Step 2</span>
+            <h2>Processing Status</h2>
+
+            <p>
+              Billing.py and Gen_tax_invoice.py execution progress.
+            </p>
+          </div>
+
+          <span
+            class="status-badge"
+            [ngClass]="statusClass">
+            {{ statusDisplayName }}
+          </span>
+        </div>
+
+        <div class="progress-header">
+          <span>{{ processMessage }}</span>
+          <strong>{{ progress }}%</strong>
+        </div>
+
+        <div class="progress-bar">
+          <div
+            class="progress-value"
+            [style.width.%]="progress">
+          </div>
+        </div>
+
+        <!-- PROCESS TIMELINE -->
+        <div class="timeline">
+
+          <div
+            class="timeline-item"
+            [ngClass]="getStageClass('uploaded')">
+
+            <div class="timeline-marker">
+              <mat-icon>
+                {{ isStageCompleted('uploaded') ? 'check' : 'upload' }}
+              </mat-icon>
+            </div>
+
+            <div>
+              <strong>File Uploaded</strong>
+              <span>Input file received by SmartBOT.</span>
+            </div>
+          </div>
+
+          <div
+            class="timeline-item"
+            [ngClass]="getStageClass('validating')">
+
+            <div class="timeline-marker">
+              <mat-icon>
+                {{ isStageCompleted('validating') ? 'check' : 'fact_check' }}
+              </mat-icon>
+            </div>
+
+            <div>
+              <strong>Billing Validation</strong>
+              <span>Billing.py validates the uploaded data.</span>
+            </div>
+          </div>
+
+          <div
+            class="timeline-item"
+            [ngClass]="getStageClass('billing')">
+
+            <div class="timeline-marker">
+              <mat-icon>
+                {{ isStageCompleted('billing') ? 'check' : 'receipt' }}
+              </mat-icon>
+            </div>
+
+            <div>
+              <strong>Billing Generation</strong>
+              <span>Billing.py generates the billing outputs.</span>
+            </div>
+          </div>
+
+          <div
+            class="timeline-item"
+            [ngClass]="getStageClass('tax_invoice')">
+
+            <div class="timeline-marker">
+              <mat-icon>
+                {{
+                isStageCompleted('tax_invoice')
+                ? 'check'
+                : 'request_quote'
+                }}
+              </mat-icon>
+            </div>
+
+            <div>
+              <strong>Tax Invoice Generation</strong>
+              <span>Gen_tax_invoice.py generates the invoices.</span>
+            </div>
+          </div>
+
+          <div
+            class="timeline-item"
+            [ngClass]="getStageClass('completed')">
+
+            <div class="timeline-marker">
+              <mat-icon>
+                {{ isStageCompleted('completed') ? 'check' : 'download' }}
+              </mat-icon>
+            </div>
+
+            <div>
+              <strong>Ready for Download</strong>
+              <span>Generated output files are available.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </article>
+
+      <!-- BACKEND LOG -->
+      <article
+        class="panel"
+        *ngIf="processLogs.length > 0">
+
+        <div class="panel-header compact">
+          <div>
+            <h2>Process Activity</h2>
+            <p>Latest processing updates returned by the backend.</p>
+          </div>
+
+          <mat-icon class="panel-header-icon">
+            terminal
+          </mat-icon>
+        </div>
+
+        <div class="process-log">
+          <div
+            class="log-line"
+            *ngFor="let log of processLogs">
+            <time>{{ log.time }}</time>
+            <span>{{ log.message }}</span>
+          </div>
+        </div>
+
+      </article>
+
+    </div>
+
+    <!-- ===================================================
+         RIGHT COLUMN
+    ==================================================== -->
+    <div class="right-column">
+
+      <!-- PROCESS INFORMATION -->
+      <article class="panel">
+
+        <div class="panel-header compact">
+          <div>
+            <h2>Process Information</h2>
+            <p>Current Group Billing batch details.</p>
+          </div>
+
+          <mat-icon class="panel-header-icon">
+            assignment
+          </mat-icon>
+        </div>
+
+        <div class="details-list">
+
+          <div class="details-row">
+            <span>Batch ID</span>
+            <strong>{{ batchId || '-' }}</strong>
+          </div>
+
+          <div class="details-row">
+            <span>File Name</span>
+            <strong>{{ selectedFile?.name || '-' }}</strong>
+          </div>
+
+          <div class="details-row">
+            <span>Uploaded By</span>
+            <strong>{{ username || '-' }}</strong>
+          </div>
+
+          <div class="details-row">
+            <span>Upload Time</span>
+            <strong>{{ uploadTime || '-' }}</strong>
+          </div>
+
+          <div class="details-row">
+            <span>Status</span>
+
+            <strong
+              class="inline-status"
+              [ngClass]="statusClass">
+              {{ statusDisplayName }}
+            </strong>
+          </div>
+
+        </div>
+
+      </article>
+
+      <!-- VALIDATION SUMMARY -->
+      <article
+        class="panel"
+        *ngIf="validationAvailable">
+
+        <div class="panel-header compact">
+          <div>
+            <h2>Validation Summary</h2>
+            <p>Billing.py validation result.</p>
+          </div>
+
+          <mat-icon class="panel-header-icon">
+            rule
+          </mat-icon>
+        </div>
+
+        <div class="validation-list">
+
+          <div class="validation-row">
+            <span class="indicator total"></span>
+            <span>Total Records</span>
+            <strong>{{ totalRecords }}</strong>
+          </div>
+
+          <div class="validation-row">
+            <span class="indicator valid"></span>
+            <span>Valid Records</span>
+            <strong>{{ validRecords }}</strong>
+          </div>
+
+          <div class="validation-row">
+            <span class="indicator rejected"></span>
+            <span>Rejected Records</span>
+            <strong>{{ rejectedRecords }}</strong>
+          </div>
+
+          <div class="validation-row">
+            <span class="indicator warning"></span>
+            <span>Warnings</span>
+            <strong>{{ warningRecords }}</strong>
+          </div>
+
+        </div>
+
+      </article>
+
+      <!-- GENERATED OUTPUT -->
+      <article
+        class="panel output-panel"
+        *ngIf="processStatus === 'completed'">
+
+        <div class="success-icon">
+          <mat-icon>task_alt</mat-icon>
+        </div>
+
+        <h2>Processing Completed</h2>
+
+        <p>
+          Group Billing and Tax Invoice generation completed
+          successfully.
+        </p>
+
+        <div class="output-list">
+
+          <div
+            class="output-file"
+            *ngIf="billingFileAvailable">
+
+            <mat-icon>table_view</mat-icon>
+
+            <div>
+              <strong>
+                {{ billingFileName || 'Generated_Billing.xlsx' }}
+              </strong>
+              <span>Generated billing output</span>
+            </div>
+
+            <button
+              type="button"
+              matTooltip="Download billing file"
+              (click)="downloadOutput('billing')">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+
+          <div
+            class="output-file"
+            *ngIf="rejectionFileAvailable">
+
+            <mat-icon>report_problem</mat-icon>
+
+            <div>
+              <strong>
+                {{ rejectionFileName || 'Billing_Rejections.xlsx' }}
+              </strong>
+              <span>Rejected records report</span>
+            </div>
+
+            <button
+              type="button"
+              matTooltip="Download rejection report"
+              (click)="downloadOutput('rejection')">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+
+          <div
+            class="output-file"
+            *ngIf="summaryFileAvailable">
+
+            <mat-icon>summarize</mat-icon>
+
+            <div>
+              <strong>
+                {{ summaryFileName || 'Billing_Summary.xlsx' }}
+              </strong>
+              <span>Billing processing summary</span>
+            </div>
+
+            <button
+              type="button"
+              matTooltip="Download billing summary"
+              (click)="downloadOutput('summary')">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+
+          <div
+            class="output-file"
+            *ngIf="taxInvoiceFileAvailable">
+
+            <mat-icon>picture_as_pdf</mat-icon>
+
+            <div>
+              <strong>
+                {{ taxInvoiceFileName || 'Tax_Invoices.zip' }}
+              </strong>
+              <span>Generated tax invoice PDFs</span>
+            </div>
+
+            <button
+              type="button"
+              matTooltip="Download tax invoices"
+              (click)="downloadOutput('tax-invoice')">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+
+        </div>
+
+        <button
+          type="button"
+          class="download-all-button"
+          [disabled]="isDownloading"
+          (click)="downloadOutput('all')">
+
+          <span
+            class="spinner"
+            *ngIf="isDownloading">
+          </span>
+
+          <mat-icon *ngIf="!isDownloading">
+            download_for_offline
+          </mat-icon>
+
+          {{
+          isDownloading
+          ? 'Preparing Download...'
+          : 'Download All Outputs'
+          }}
+        </button>
+
+      </article>
+
+      <!-- FAILED PANEL -->
+      <article
+        class="panel failure-panel"
+        *ngIf="processStatus === 'failed'">
+
+        <div class="failure-icon">
+          <mat-icon>error_outline</mat-icon>
+        </div>
+
+        <h2>Processing Failed</h2>
+
+        <p>
+          {{
+          backendErrorMessage ||
+          'The Group Billing process could not be completed.'
+          }}
+        </p>
+
+        <button
+          type="button"
+          class="retry-button"
+          (click)="resetProcess()">
+          <mat-icon>refresh</mat-icon>
+          Try Again
+        </button>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</div>

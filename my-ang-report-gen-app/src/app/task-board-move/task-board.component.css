@@ -1,0 +1,214 @@
+/* === Host full screen, block page scroll === */
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+  background: url('/assets/trello-bg.jpg') no-repeat center center/cover;
+}
+
+/* === Scroll wrapper (x + y scroll inside board only) === */
+.board-wrapper {
+  position: absolute;
+  top: 90px; /* Adjust based on header height */
+  left: 240px; /* Adjust based on sidebar width */
+  right: 0;
+  bottom: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* === Board: flex layout of columns === */
+.board {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  min-height: 100%;
+  width: max-content; /* enables horizontal scroll */
+  padding-bottom: 1rem;
+}
+
+/* === Column === */
+.column {
+  background-color: #f4f5f7;
+  border-radius: 12px;
+  padding: 12px;
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* === Column Header === */
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.column h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* === List Actions === */
+.list-actions-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+}
+
+.list-actions-menu {
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  padding: 8px;
+  min-width: 160px;
+}
+
+.list-actions-menu button {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.list-actions-menu button:hover {
+  background-color: #e1e2e4;
+}
+
+.color-options {
+  display: flex;
+  gap: 6px;
+  padding: 6px 4px 0;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+}
+
+/* === Task Card === */
+.task-card {
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+  transition: box-shadow 0.2s;
+  position: relative;
+
+/* ✅ Add these */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+  overflow: hidden;
+
+}
+
+.task-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* === Task Title === */
+.task-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.task-title-text {
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+/* === Task Meta === */
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #777;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* === Hover Options === */
+.task-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.task-options button {
+  font-size: 12px;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  text-align: left;
+  cursor: pointer;
+  color: #444;
+}
+
+.task-options button:hover {
+  background: #f0f0f0;
+}
+
+/* === Add Card Button === */
+.add-card-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  color: #333;
+  border-radius: 6px;
+  margin-top: auto;
+}
+
+.add-card-btn:hover {
+  background: rgba(9, 30, 66, 0.08);
+}
+
+/* === Edit Icon === */
+.edit-icon {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.edit-icon:hover {
+  color: #333;
+}

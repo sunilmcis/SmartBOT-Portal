@@ -1,0 +1,72 @@
+.dashboard {
+  font-family: Arial, sans-serif;
+}
+
+header {
+  background-color: #333;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+
+}
+
+main {
+  padding: 2rem;
+  padding-top: 10px;
+}
+.container2 {
+  height: 529px;
+  padding: 60px;
+  padding-top: 20px;
+  max-width: 1500px;
+  margin: 10px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);}
+
+  .container3 {
+    height: 529px;
+    width: 470px;
+    padding: 40px;
+    max-width: 1000px;
+    margin: 10px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+
+    }
+
+  .container4 {
+    transition: all 0.3s ease;
+    margin: 10px
+    width: 180px;
+    height: 100px;
+  }
+  .container4:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(0,0,0,0.15);
+
+
+  }
+  .container5 {
+     height: 100px;
+     width: 1300px;
+       padding: 40px;
+       max-width: 1800px;
+       margin: 10px;
+       background: white;
+       border-radius: 16px;
+       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+
+  .blink {
+    animation: blink-animation 1s steps(2, start) infinite;
+    color: red; /* Optional: makes the text red */
+    font-weight: bold;
+  }
+
+  @keyframes blink-animation {
+    to {
+      visibility: hidden;
+    }
+  }

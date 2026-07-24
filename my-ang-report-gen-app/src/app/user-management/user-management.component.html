@@ -1,0 +1,442 @@
+<div class="user-management-container">
+  <!-- Header + Search -->
+  <div class="header-section">
+    <h2>User Management</h2>
+
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search users...</mat-label>
+        <input matInput (input)="applyFilter($event)" />
+        <button *ngIf="searchValue" matSuffix mat-icon-button (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="goToRegister()">
+        <mat-icon>person_add</mat-icon>
+        &nbsp;Create New User
+      </button>
+    </div>
+  </div>
+
+  <!-- Table Card -->
+  <mat-card>
+
+    <div *ngIf="isLoading" class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" *ngIf="!isLoading">
+
+      <!-- Employee ID -->
+      <ng-container matColumnDef="employeeId">
+        <th mat-header-cell *matHeaderCellDef>Employee ID</th>
+        <td mat-cell *matCellDef="let user">{{ user.emp_id }}</td>
+      </ng-container>
+
+      <!-- Username -->
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef>Username</th>
+        <td mat-cell *matCellDef="let user">{{ user.first_name }}</td>
+      </ng-container>
+
+      <!-- Department -->
+      <ng-container matColumnDef="department">
+        <th mat-header-cell *matHeaderCellDef>Department</th>
+        <td mat-cell *matCellDef="let user">{{ user.dept }}</td>
+      </ng-container>
+
+      <!-- Role -->
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Role</th>
+        <td mat-cell *matCellDef="let user">{{ user.role }}</td>
+      </ng-container>
+
+      <!-- Email -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let user">{{ user.email_address }}</td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let user">
+          <span [ngClass]="{ 'status-pill active': user.status === 'A', 'status-pill inactive': user.status !== 'A' }">
+            {{ user.status === 'A' ? 'Active' : 'Inactive' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Created Date -->
+      <ng-container matColumnDef="created_date">
+        <th mat-header-cell *matHeaderCellDef>Created</th>
+        <td mat-cell *matCellDef="let user">{{ user.created_dt | date: 'short' }}</td>
+      </ng-container>
+
+      <!-- Access -->
+      <ng-container matColumnDef="access">
+        <th mat-header-cell *matHeaderCellDef>Access</th>
+        <td mat-cell *matCellDef="let user">
+          <mat-form-field appearance="fill" class="compact-select-field">
+            <mat-select [value]="user.v_access" (selectionChange)="toggleAccess(user, $event.value)">
+              <mat-option value="Grant">Grant</mat-option>
+              <mat-option value="Revoke">Revoke</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let user">
+          <button mat-icon-button [matMenuTriggerFor]="actionMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #actionMenu="matMenu">
+            <button mat-menu-item (click)="resetPassword(user)">
+              <mat-icon>lock_reset</mat-icon>
+              <span>Reset Password</span>
+            </button>
+            <button mat-menu-item (click)="openProfileDialog(user)">
+              <mat-icon>person</mat-icon>
+              <span>View Profile</span>
+            </button>
+            <button mat-menu-item (click)="disableUser(user)">
+              <mat-icon>block</mat-icon>
+              <span>Disable</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr *ngIf="!isLoading && dataSource.data.length === 0">
+        <td colspan="10" class="text-center">No users found.</td>
+      </tr>
+    </table>
+
+  </mat-card>
+
+  <mat-paginator
+    [length]="totalUsers"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</div>
+
+<!--<div class="user-management-container">-->
+
+<!--  <div class="header-section">-->
+<!--    <h2>User Management</h2>-->
+<!--    <button mat-raised-button color="primary" (click)="goToRegister()">-->
+<!--      + Create New User-->
+<!--    </button>-->
+<!--  </div>-->
+
+<!--  <mat-card>-->
+
+<!--    <div *ngIf="isLoading" class="spinner-container">-->
+<!--      <mat-spinner diameter="40"></mat-spinner>-->
+<!--    </div>-->
+
+<!--    <table mat-table [dataSource]="dataSource" class="mat-elevation-z1" *ngIf="!isLoading">-->
+
+<!--      &lt;!&ndash; Employee ID Column &ndash;&gt;-->
+<!--      <ng-container matColumnDef="employeeId">-->
+<!--        <th mat-header-cell *matHeaderCellDef> Employee ID </th>-->
+<!--        <td mat-cell *matCellDef="let user"> {{ user.emp_id }} </td>-->
+<!--      </ng-container>-->
+
+<!--      &lt;!&ndash; Username Column &ndash;&gt;-->
+<!--      <ng-container matColumnDef="username">-->
+<!--        <th mat-header-cell *matHeaderCellDef> Username </th>-->
+<!--        <td mat-cell *matCellDef="let user"> {{ user.first_name }} </td>-->
+<!--      </ng-container>-->
+
+<!--      &lt;!&ndash; Add more columns here, e.g., department, role, etc. &ndash;&gt;-->
+<!--      &lt;!&ndash; Department Column &ndash;&gt;-->
+<!--      <ng-container matColumnDef="department">-->
+<!--        <th mat-header-cell *matHeaderCellDef> Department </th>-->
+<!--        <td mat-cell *matCellDef="let user"> {{ user.dept }} </td>-->
+<!--      </ng-container>-->
+
+<!--      &lt;!&ndash; Role Column &ndash;&gt;-->
+<!--      <ng-container matColumnDef="role">-->
+<!--        <th mat-header-cell *matHeaderCellDef> Role </th>-->
+<!--        <td mat-cell *matCellDef="let user"> {{ user.role }} </td>-->
+<!--      </ng-container>-->
+
+<!--      &lt;!&ndash; Email Column &ndash;&gt;-->
+<!--      <ng-container matColumnDef="email">-->
+<!--        <th mat-header-cell *matHeaderCellDef> Email </th>-->
+<!--        <td mat-cell *matCellDef="let user"> {{ user.email_address }} </td>-->
+<!--      </ng-container>-->
+
+<!--      &lt;!&ndash; Status Column &ndash;&gt;-->
+<!--      <ng-container matColumnDef="status">-->
+<!--        <th mat-header-cell *matHeaderCellDef> Status </th>-->
+<!--        <td mat-cell *matCellDef="let user"> {{ user.status }} </td>-->
+<!--      </ng-container>-->
+
+<!--      &lt;!&ndash; Created Date Column &ndash;&gt;-->
+<!--      <ng-container matColumnDef="created_date">-->
+<!--        <th mat-header-cell *matHeaderCellDef> Created Date </th>-->
+<!--        <td mat-cell *matCellDef="let user"> {{ user.created_dt | date:'short' }} </td>-->
+<!--      </ng-container>-->
+
+<!--       Access Controls Column-->
+<!--&lt;!&ndash;      <ng-container matColumnDef="access_controls">&ndash;&gt;-->
+<!--&lt;!&ndash;        <th mat-header-cell *matHeaderCellDef> Access </th>&ndash;&gt;-->
+<!--&lt;!&ndash;        <td mat-cell *matCellDef="let user">&ndash;&gt;-->
+<!--&lt;!&ndash;          <button mat-button color="primary" (click)="toggleAccess(user, user.access === 'Allow' ? 'Not Allow' : 'Allow')">&ndash;&gt;-->
+<!--&lt;!&ndash;            {{ user.access === 'Allow' ? 'Revoke' : 'Grant' }}&ndash;&gt;-->
+<!--&lt;!&ndash;          </button>&ndash;&gt;-->
+<!--&lt;!&ndash;        </td>&ndash;&gt;-->
+<!--&lt;!&ndash;      </ng-container>&ndash;&gt;-->
+
+
+<!--      <ng-container matColumnDef="access" >-->
+<!--        <th mat-header-cell *matHeaderCellDef> Access </th>-->
+<!--        <td mat-cell *matCellDef="let user">-->
+<!--          <mat-form-field appearance="fill" class="compact-select-field" appearance="outline" >-->
+<!--            <mat-select [value]="user.v_access" (selectionChange)="toggleAccess(user, $event.value)">-->
+<!--              <mat-option value="Grant">Grant</mat-option>-->
+<!--              <mat-option value="Revoke">Revoke</mat-option>-->
+<!--            </mat-select>-->
+<!--          </mat-form-field>-->
+<!--        </td>-->
+<!--      </ng-container>-->
+
+
+
+
+
+<!--&lt;!&ndash;      <ng-container matColumnDef="access">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                <mat-header-cell *matHeaderCellDef>Access</mat-header-cell>&ndash;&gt;-->
+<!--&lt;!&ndash;                <mat-cell *matCellDef="let user">&ndash;&gt;-->
+<!--&lt;!&ndash;                  <mat-form-field appearance="fill" style="width: 120px;">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <mat-select [value]="user.v_access" (selectionChange)="toggleAccess(user, $event.value)">&ndash;&gt;-->
+<!--&lt;!&ndash;                      <mat-option value="Grant">Grant</mat-option>&ndash;&gt;-->
+<!--&lt;!&ndash;                      <mat-option value="Revoke">Revoke</mat-option>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </mat-select>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </mat-form-field>&ndash;&gt;-->
+<!--&lt;!&ndash;                </mat-cell>&ndash;&gt;-->
+<!--&lt;!&ndash;              </ng-container>&ndash;&gt;-->
+
+
+<!--       Actions Column-->
+<!--      <ng-container matColumnDef="actions">-->
+<!--        <th mat-header-cell *matHeaderCellDef> Actions </th>-->
+<!--        <td mat-cell *matCellDef="let user">-->
+<!--          <button mat-button color="accent" (click)="resetPassword(user)">Reset Password</button>-->
+<!--        </td>-->
+<!--      </ng-container>-->
+
+
+<!--&lt;!&ndash;      <ng-container matColumnDef="access_controls">&ndash;&gt;-->
+<!--&lt;!&ndash;        <th mat-header-cell *matHeaderCellDef> Access </th>&ndash;&gt;-->
+<!--&lt;!&ndash;        <td mat-cell *matCellDef="let user"> &lt;!&ndash; This makes 'user' available &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;          <mat-form-field appearance="fill" class="compact-select-field">&ndash;&gt;-->
+<!--&lt;!&ndash;            <mat-select [value]="user.v_access" (selectionChange)="toggleAccess(user, $event.value)">&ndash;&gt;-->
+<!--&lt;!&ndash;              <mat-option value="Allow">Grant</mat-option>&ndash;&gt;-->
+<!--&lt;!&ndash;              <mat-option value="Not Allow">Revoke</mat-option>&ndash;&gt;-->
+<!--&lt;!&ndash;            </mat-select>&ndash;&gt;-->
+<!--&lt;!&ndash;          </mat-form-field>&ndash;&gt;-->
+<!--&lt;!&ndash;        </td>&ndash;&gt;-->
+<!--&lt;!&ndash;      </ng-container>&ndash;&gt;-->
+
+
+
+
+
+<!--      &lt;!&ndash; Table rows &ndash;&gt;-->
+<!--      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
+<!--      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
+
+<!--      &lt;!&ndash; No data row &ndash;&gt;-->
+<!--      <tr *ngIf="!isLoading && dataSource.data.length === 0">-->
+<!--        <td colspan="10" class="text-center">No data available</td>-->
+<!--      </tr>-->
+
+<!--    </table>-->
+
+<!--  </mat-card>-->
+
+<!--  <mat-paginator [length]="totalUsers"-->
+<!--                 [pageSize]="10"-->
+<!--                 [pageSizeOptions]="[5, 10, 15]"-->
+<!--                 (page)="onPageChange($event)">-->
+<!--  </mat-paginator>-->
+
+<!--</div>-->
+
+
+
+<!--<div class="user-management-container">-->
+
+<!--  <div class="header-section">-->
+<!--    <h2>User Management</h2>-->
+<!--    <button mat-raised-button color="primary" (click)="goToRegister()">-->
+<!--      + Create New User-->
+<!--    </button>-->
+<!--  </div>-->
+
+<!--  <mat-card>-->
+<!--&lt;!&ndash;    <table mat-table [dataSource]="dataSource" class="mat-elevation-z1" *ngIf="!isLoading">&ndash;&gt;-->
+<!--    <mat-table [dataSource]="dataSource" class="mat-elevation-z1" multiTemplateDataRows>-->
+
+<!--      <ng-container matColumnDef="emp_id">-->
+<!--        <mat-header-cell *matHeaderCellDef>Employee ID</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">{{ user.emp_id }}</mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <ng-container matColumnDef="username">-->
+<!--        <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">{{ user.first_name }}</mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <ng-container matColumnDef="department">-->
+<!--        <mat-header-cell *matHeaderCellDef>Department</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">{{ user.dept }}</mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <ng-container matColumnDef="role">-->
+<!--        <mat-header-cell *matHeaderCellDef>Role</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">{{ user.role }}</mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <ng-container matColumnDef="email">-->
+<!--        <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">{{ user.email_address }}</mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <ng-container matColumnDef="status">-->
+<!--        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">{{ user.status }}</mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <ng-container matColumnDef="created_at">-->
+<!--        <mat-header-cell *matHeaderCellDef>Created</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">{{ user.created_dt | date: 'short' }}</mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <ng-container matColumnDef="access">-->
+<!--        <mat-header-cell *matHeaderCellDef>Access</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">-->
+<!--          <mat-form-field appearance="fill" style="width: 120px;">-->
+<!--            <mat-select [value]="user.v_access" (selectionChange)="toggleAccess(user, $event.value)">-->
+<!--              <mat-option value="Grant">Grant</mat-option>-->
+<!--              <mat-option value="Revoke">Revoke</mat-option>-->
+<!--            </mat-select>-->
+<!--          </mat-form-field>-->
+<!--        </mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <ng-container matColumnDef="reset">-->
+<!--        <mat-header-cell *matHeaderCellDef>Reset</mat-header-cell>-->
+<!--        <mat-cell *matCellDef="let user">-->
+<!--          <button mat-button color="warn" (click)="resetPassword(user)">Reset Password</button>-->
+<!--        </mat-cell>-->
+<!--      </ng-container>-->
+
+<!--      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>-->
+<!--      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>-->
+
+<!--    </mat-table>-->
+
+
+
+
+
+<!--  </mat-card>-->
+
+<!--  <mat-paginator [length]="totalUsers"-->
+<!--                 [pageSize]="10"-->
+<!--                 [pageSizeOptions]="[5, 10, 15]"-->
+<!--                 (page)="onPageChange($event)">-->
+<!--  </mat-paginator>-->
+
+
+<!--</div>-->
+
+<!--//previous-->
+<!--<div class="header">-->
+<!--  <h2>User Management</h2>-->
+<!--&lt;!&ndash;  <button mat-raised-button color="primary" (click)="openCreateUserDialog()">Create New User</button>&ndash;&gt;-->
+<!--  <button mat-raised-button color="primary" (click)="goToRegister()">Create New User</button>-->
+<!--&lt;!&ndash;  <button type="button" class="register-btn" (click)="goToRegister()">New user? Register</button>&ndash;&gt;-->
+<!--</div>-->
+
+<!--<table mat-table [dataSource]="users" class="mat-elevation-z8">-->
+<!--  <ng-container matColumnDef="emp_id">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Employee ID</th>-->
+<!--    <td mat-cell *matCellDef="let user">{{ user.emp_id }}</td>-->
+<!--  </ng-container>-->
+
+<!--  <ng-container matColumnDef="username">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Username</th>-->
+<!--    <td mat-cell *matCellDef="let user">{{ user.first_name }}</td>-->
+<!--  </ng-container>-->
+
+<!--  <ng-container matColumnDef="department">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Department</th>-->
+<!--    <td mat-cell *matCellDef="let user">{{ user.dept }}</td>-->
+<!--  </ng-container>-->
+
+<!--  <ng-container matColumnDef="role">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Role</th>-->
+<!--    <td mat-cell *matCellDef="let user">{{ user.role }}</td>-->
+<!--  </ng-container>-->
+
+<!--  <ng-container matColumnDef="email">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Email</th>-->
+<!--    <td mat-cell *matCellDef="let user">{{ user.email_address }}</td>-->
+<!--  </ng-container>-->
+
+<!--  <ng-container matColumnDef="status">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Status</th>-->
+<!--    <td mat-cell *matCellDef="let user">{{ user.status }}</td>-->
+<!--  </ng-container>-->
+
+<!--  <ng-container matColumnDef="created_at">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Created</th>-->
+<!--    <td mat-cell *matCellDef="let user">{{ user.created_dt | date:'short' }}</td>-->
+<!--  </ng-container>-->
+
+<!--&lt;!&ndash;  <ng-container matColumnDef="access">&ndash;&gt;-->
+<!--&lt;!&ndash;    <th mat-header-cell *matHeaderCellDef>Access</th>&ndash;&gt;-->
+<!--&lt;!&ndash;    <td mat-cell *matCellDef="let user">&ndash;&gt;-->
+<!--&lt;!&ndash;      <button mat-button color="accent" (click)="toggleAccess(user)">&ndash;&gt;-->
+<!--&lt;!&ndash;        {{ user.access === 'Grant' ? 'Revoke' : 'Grant' }}&ndash;&gt;-->
+<!--&lt;!&ndash;      </button>&ndash;&gt;-->
+<!--&lt;!&ndash;    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;  </ng-container>&ndash;&gt;-->
+
+<!--  <ng-container matColumnDef="access">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Access</th>-->
+<!--    <td mat-cell *matCellDef="let user">-->
+<!--      <mat-form-field appearance="fill" style="width: 120px;">-->
+<!--        <mat-select [value]="user.v_access" (selectionChange)="toggleAccess(user, $event.value)">-->
+<!--          <mat-option value="Grant">Grant</mat-option>-->
+<!--          <mat-option value="Revoke">Revoke</mat-option>-->
+<!--        </mat-select>-->
+<!--      </mat-form-field>-->
+<!--    </td>-->
+<!--  </ng-container>-->
+
+
+<!--  <ng-container matColumnDef="reset">-->
+<!--    <th mat-header-cell *matHeaderCellDef>Reset</th>-->
+<!--    <td mat-cell *matCellDef="let user">-->
+<!--      <button mat-button color="warn" (click)="resetPassword()">Reset Password</button>-->
+<!--    </td>-->
+<!--  </ng-container>-->
+
+<!--  <tr mat-header-row *matHeaderRowDef="['emp_id', 'username', 'department', 'role', 'email', 'status', 'created_at', 'access', 'reset']"></tr>-->
+<!--  <tr mat-row *matRowDef="let row; columns: ['emp_id', 'username', 'department', 'role', 'email', 'status', 'created_at', 'access', 'reset']"></tr>-->
+<!--</table>-->
+<!--&lt;!&ndash;<button mat-raised-button color="primary" (click)="goToRegister()">Create New User</button>&ndash;&gt;-->

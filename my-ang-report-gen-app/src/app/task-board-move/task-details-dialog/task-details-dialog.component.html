@@ -1,0 +1,184 @@
+<div class="dialog-container">
+  <div class="left-column">
+    <div class="status-dropdown">
+      <span class="status-pill">{{ data.status }}</span>
+    </div>
+
+    <h2>{{ data.title }}</h2>
+
+    <div class="task-controls">
+      <div class="dropdown" (click)="showAddMenu = !showAddMenu">
+        <button mat-stroked-button color="primary">
+          <span class="material-icons">add</span>&nbsp;Add
+        </button>
+        <div class="dropdown-menu" *ngIf="showAddMenu">
+          <button mat-menu-item><span class="material-icons">label</span> Labels</button>
+          <button mat-menu-item><span class="material-icons">event</span> Dates</button>
+          <button mat-menu-item><span class="material-icons">check_box</span> Checklist</button>
+          <button mat-menu-item><span class="material-icons">group</span> Members</button>
+          <button mat-menu-item><span class="material-icons">attach_file</span> Attachment</button>
+          <button mat-menu-item><span class="material-icons">location_on</span> Location</button>
+          <button mat-menu-item><span class="material-icons">tune</span> Custom Fields</button>
+        </div>
+      </div>
+
+      <button mat-stroked-button><span class="material-icons">label</span>&nbsp;Labels</button>
+      <button mat-stroked-button><span class="material-icons">check_box</span>&nbsp;Checklist</button>
+      <button mat-stroked-button><span class="material-icons">group</span>&nbsp;Members</button>
+      <button mat-stroked-button><span class="material-icons">attach_file</span>&nbsp;Attachment</button>
+    </div>
+
+    <div class="task-meta">
+      <label>Due date</label>
+      <input type="datetime-local" [(ngModel)]="data.due_date" />
+    </div>
+
+    <div class="task-description">
+      <h4>Description</h4>
+      <textarea [(ngModel)]="data.description"></textarea>
+    </div>
+  </div>
+
+  <div class="right-column">
+    <h4>Comments and Activity</h4>
+
+    <div class="comments-container">
+      <!-- New comment box -->
+      <div class="comment-box">
+        <mat-form-field appearance="fill" class="comment-input">
+          <mat-label>Write a comment...</mat-label>
+          <textarea matInput [(ngModel)]="newComment"></textarea>
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="postComment()">Post</button>
+      </div>
+
+      <!-- Activity Feed -->
+      <div class="activity-item" *ngFor="let item of data.activity">
+        <div class="activity-avatar">
+          <img [src]="item.avatar || defaultAvatar" alt="avatar" />
+        </div>
+        <div class="activity-content">
+          <div class="activity-header">
+            <span class="material-icons activity-icon">{{ getActivityIcon(item.type) }}</span>
+            <strong>{{ item.author }}</strong>
+            <span class="activity-time">{{ item.time | date: 'short' }}</span>
+          </div>
+          <div class="activity-text">{{ item.text }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-actions">
+  <button mat-stroked-button (click)="close()">Close</button>
+</div>
+
+
+<!--<div class="dialog-container">-->
+<!--  <div class="left-column">-->
+<!--    <div class="status-dropdown">-->
+<!--      <span class="status-pill">{{ data.status }}</span>-->
+<!--    </div>-->
+
+<!--    <h2>{{ data.title }}</h2>-->
+
+<!--    <div class="task-controls">-->
+<!--      <div class="dropdown" (click)="showAddMenu = !showAddMenu">-->
+<!--        <button mat-stroked-button color="primary">-->
+<!--          <span class="material-icons">add</span>&nbsp;Add-->
+<!--        </button>-->
+<!--        <div class="dropdown-menu" *ngIf="showAddMenu">-->
+<!--          <button mat-menu-item><span class="material-icons">label</span> Labels</button>-->
+<!--          <button mat-menu-item><span class="material-icons">event</span> Dates</button>-->
+<!--          <button mat-menu-item><span class="material-icons">check_box</span> Checklist</button>-->
+<!--          <button mat-menu-item><span class="material-icons">group</span> Members</button>-->
+<!--          <button mat-menu-item><span class="material-icons">attach_file</span> Attachment</button>-->
+<!--          <button mat-menu-item><span class="material-icons">location_on</span> Location</button>-->
+<!--          <button mat-menu-item><span class="material-icons">tune</span> Custom Fields</button>-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      <button mat-stroked-button><span class="material-icons">label</span>&nbsp;Labels</button>-->
+<!--      <button mat-stroked-button><span class="material-icons">check_box</span>&nbsp;Checklist</button>-->
+<!--      <button mat-stroked-button><span class="material-icons">group</span>&nbsp;Members</button>-->
+<!--      <button mat-stroked-button><span class="material-icons">attach_file</span>&nbsp;Attachment</button>-->
+<!--    </div>-->
+
+<!--    <div class="task-meta">-->
+<!--      <label>Due date</label>-->
+<!--      <input type="datetime-local" [(ngModel)]="data.due_date" />-->
+<!--    </div>-->
+
+<!--    <div class="task-description">-->
+<!--      <h4>Description</h4>-->
+<!--      <textarea [(ngModel)]="data.description"></textarea>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div class="right-column">-->
+<!--    <h4>Comments and Activity</h4>-->
+
+<!--    <div class="comments-container">-->
+<!--      &lt;!&ndash; New comment box &ndash;&gt;-->
+<!--      <div class="comment-box">-->
+<!--        <mat-form-field appearance="fill" class="comment-input">-->
+<!--          <mat-label>Write a comment...</mat-label>-->
+<!--          <textarea matInput [(ngModel)]="newComment"></textarea>-->
+<!--        </mat-form-field>-->
+<!--        <button mat-flat-button color="primary" (click)="postComment()">Post</button>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Existing comments &ndash;&gt;-->
+<!--      <div class="comment" *ngFor="let comment of data.comments">-->
+<!--        <div class="comment-avatar">-->
+<!--          <img [src]="comment.avatar || defaultAvatar" alt="avatar" />-->
+<!--        </div>-->
+<!--        <div class="comment-content">-->
+<!--          <div class="comment-header">-->
+<!--            <strong>{{ comment.author }}</strong>-->
+<!--            <span class="comment-time">{{ comment.time | date: 'short' }}</span>-->
+<!--          </div>-->
+<!--          <div class="comment-text">{{ comment.text }}</div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div class="dialog-actions">-->
+<!--  <button mat-stroked-button (click)="close()">Close</button>-->
+<!--</div>-->
+
+
+<!--&lt;!&ndash; task-details-dialog.component.html &ndash;&gt;-->
+
+<!--<h2>{{ data.title }}</h2>-->
+
+<!--<div class="task-controls">-->
+<!--  <button mat-button>+ Add</button>-->
+<!--  <button mat-button>Labels</button>-->
+<!--  <button mat-button>Checklist</button>-->
+<!--  <button mat-button>Members</button>-->
+<!--  <button mat-button>Attachment</button>-->
+<!--</div>-->
+
+<!--<div class="task-meta">-->
+<!--  <label>Due date</label>-->
+<!--  <input type="datetime-local" [(ngModel)]="data.due_date" />-->
+<!--</div>-->
+
+<!--<div class="task-description">-->
+<!--  <h4>Description</h4>-->
+<!--  <textarea [(ngModel)]="data.description"></textarea>-->
+<!--</div>-->
+
+<!--<div class="task-comments">-->
+<!--  <h4>Comments and activity</h4>-->
+<!--  <textarea placeholder="Write a comment..."></textarea>-->
+<!--  <p><strong>{{ data.created_by || 'You' }}</strong> added this card to {{ data.status }}</p>-->
+<!--</div>-->
+
+<!--<div class="dialog-actions">-->
+<!--  <button mat-button (click)="close()">Close</button>-->
+<!--</div>-->

@@ -1,0 +1,34 @@
+<!--<h1> Task</h1>-->
+<!--<div class="board">-->
+<!--  <div class="column" *ngFor="let column of columns">-->
+<!--    <h3>{{ column }}</h3>-->
+<!--    <div cdkDropList [cdkDropListData]="columnTasks[column]" class="task-list"-->
+<!--         (cdkDropListDropped)="drop($event, column)">-->
+<!--      <div class="task-card" *ngFor="let task of columnTasks[column]" cdkDrag>-->
+<!--        <h4>{{ task.title }}</h4>-->
+<!--        <p>{{ task.description }}</p>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<div class="board">
+  <div class="column" *ngFor="let column of columns">
+    <h3>{{ column }}</h3>
+    <div
+      cdkDropList
+      [cdkDropListData]="columnTasks[column]"
+      class="task-list"
+      (cdkDropListDropped)="drop($event, column)"
+    >
+      <div
+        class="task-card"
+        *ngFor="let task of columnTasks[column]"
+        cdkDrag
+      >
+        <h4>{{ task.title }}</h4>
+        <p>{{ task.description }}</p>
+      </div>
+    </div>
+  </div>
+</div>

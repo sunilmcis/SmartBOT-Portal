@@ -1,0 +1,195 @@
+/* === Container === */
+.user-management-container {
+  padding: 24px;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* === Header Section with title + actions === */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-section h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* === Search Bar === */
+.search-field {
+  width: 250px;
+}
+
+mat-form-field.search-field {
+  margin: 0;
+}
+
+/* === Create User Button === */
+.header-section button {
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  text-transform: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* === Card Wrapper === */
+mat-card {
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  background: white;
+}
+
+/* === Table Styling === */
+mat-table {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+  border-collapse: collapse;
+}
+
+/* === Header Cells === */
+mat-header-cell {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px;
+  background-color: #f0f2f5;
+  color: #37474f;
+  border-bottom: 1px solid #ccc;
+}
+
+/* === Data Cells === */
+mat-cell {
+  font-size: 13px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* === Zebra striping for rows === */
+mat-row:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* === Reset Password Button === */
+button[mat-button] {
+  font-size: 13px;
+  color: #1976d2;
+  font-weight: 500;
+  text-transform: none;
+  padding: 0;
+}
+
+button[mat-button]:hover {
+  text-decoration: underline;
+}
+
+/* === Compact Dropdowns for Access Column === */
+.compact-select-field {
+  width: 120px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  height: 36px;
+}
+
+.compact-select-field .mat-form-field-wrapper {
+  padding: 0;
+  height: 32px;
+}
+
+.compact-select-field .mat-select-trigger,
+.compact-select-field .mat-select {
+  height: 32px;
+  line-height: 32px;
+  font-size: 13px;
+}
+
+/* === Status Pills === */
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  display: inline-block;
+  text-align: center;
+}
+
+.status-pill.active {
+  background-color: #4caf50;
+}
+
+.status-pill.inactive {
+  background-color: #f44336;
+}
+
+/* === Spinner for loading === */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+}
+
+/* === Empty table message === */
+.text-center {
+  text-align: center;
+  font-size: 14px;
+  padding: 20px;
+  color: #888;
+}
+
+/* === Paginator spacing === */
+mat-paginator {
+  margin-top: 16px;
+}
+
+/* === Responsive behavior (optional tweaks) === */
+@media (max-width: 768px) {
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-field {
+    width: 100%;
+  }
+
+  mat-card {
+    padding: 12px;
+  }
+
+  mat-header-cell,
+  mat-cell {
+    font-size: 12px;
+    padding: 8px;
+  }
+}

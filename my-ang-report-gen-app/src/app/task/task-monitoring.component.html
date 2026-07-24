@@ -1,0 +1,36 @@
+<div class="task-monitoring-container">
+
+  <div class="header-section">
+    <h2>Task Monitoring</h2>
+    <button mat-raised-button color="primary" (click)="openCreateTaskDialog()">
+      + Create Task
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z1" multiTemplateDataRows>
+
+      <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
+        <mat-header-cell *matHeaderCellDef>{{ col | titlecase }}</mat-header-cell>
+        <mat-cell *matCellDef="let task">
+          <ng-container [ngSwitch]="col">
+            <ng-container *ngSwitchCase="'attachment'">
+              <a *ngIf="task.attachment" href="http://localhost:3017/uploads/{{task.attachment}}" target="_blank">Download</a>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{ task[col] }}
+            </ng-container>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+    </mat-table>
+
+    <mat-paginator [length]="totalItems" [pageSize]="15" (page)="onPageChange($event)">
+    </mat-paginator>
+  </mat-card>
+
+</div>

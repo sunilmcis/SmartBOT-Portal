@@ -1,0 +1,117 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      margin: 10px;
+      background-color: #f4f4f9;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 50px;
+      margin-left: 2px;
+      margin-right: 2px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Generate Report</h2>
+  <form>
+    <style>
+      #policyNumber {
+        width: 400px; /* Set width to 300 pixels */
+        height: 15px; /* Set height to 40 pixels */
+      }
+      #startDate {
+        width: 400px; /* Set width to 300 pixels */
+        height: 15px; /* Set height to 40 pixels */
+      }
+      #endDate {
+        width: 400px; /* Set width to 300 pixels */
+        height: 15px; /* Set height to 40 pixels */
+      }
+      #category {
+        width: 400px; /* Set width to 300 pixels */
+        height: 50px; /* Set height to 40 pixels */
+      }
+	  #parameter {
+        width: 400px; /* Set width to 300 pixels */
+        height: 50px; /* Set height to 40 pixels */
+      }
+
+
+    </style>
+
+
+    <!-- <div class="form-group">
+       <label for="category">Report Category</label>
+       <select id="category" name="category" style="height:40px;  width:420px; ">
+         <option *ngFor="let item of items" [value]="item.value">{{ item.label }}</option>
+       </select>
+     </div> -->
+    <div class="form-group">
+      <label for="category">Report Category</label>
+      <select
+        id="category"
+        name="category"
+        [(ngModel)]="selectedCategory"
+        (change)="onCategoryChange($event)"
+        required
+        style="width: 400px; height: 50px;"
+      >
+        <option *ngFor="let item of items" [value]="item.value">{{ item.label }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="parameter">Parameter</label>
+      <select
+        id="parameter"
+        name="parameter"
+        [(ngModel)]="selectedParameter"
+        [disabled]="!parameters.length"
+        required
+        style="width: 400px; height: 50px;"
+      >
+        <option *ngFor="let param of parameters" [value]="param.value">{{ param.value }}</option>
+      </select>
+    </div>
+
+    <button type="submit" style="width:100px; float: right; margin-left: 0;"  >Search</button> <!--margin-right: auto; -->
+  </form>
+</div>
+</body>
+</html>

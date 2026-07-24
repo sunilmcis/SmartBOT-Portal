@@ -1,0 +1,736 @@
+<div class="enterprise-shell">
+
+  <!-- =====================================================
+       MOBILE OVERLAY
+  ====================================================== -->
+  <div
+    class="sidebar-overlay"
+    *ngIf="sidebarOpen"
+    (click)="closeSidebar()">
+  </div>
+
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
+  <aside
+    class="sidebar"
+    [class.sidebar-open]="sidebarOpen"
+    [class.sidebar-collapsed]="sidebarCollapsed">
+
+    <!-- BRAND -->
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <img src="assets/MCIS.png" alt="MCIS Logo">
+      </div>
+
+      <div class="brand-text" *ngIf="!sidebarCollapsed">
+        <strong>SmartBOT</strong>
+        <span>Enterprise Platform</span>
+      </div>
+
+      <button
+        type="button"
+        class="desktop-collapse-button"
+        (click)="toggleSidebarCollapse()"
+        [attr.aria-label]="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+        <mat-icon>
+          {{ sidebarCollapsed ? 'chevron_right' : 'chevron_left' }}
+        </mat-icon>
+      </button>
+    </div>
+
+    <!-- USER SUMMARY -->
+    <div class="sidebar-user" *ngIf="!sidebarCollapsed">
+      <div class="sidebar-avatar">
+        <img
+          *ngIf="authService.getProfilePictureUrl(); else sidebarDefaultAvatar"
+          [src]="authService.getProfilePictureUrl()"
+          alt="Profile picture">
+
+        <ng-template #sidebarDefaultAvatar>
+          <mat-icon>person</mat-icon>
+        </ng-template>
+      </div>
+
+      <div class="sidebar-user-info">
+        <strong>{{ username || 'SmartBOT User' }}</strong>
+        <span>{{ role || 'User' }}</span>
+      </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="sidebar-navigation">
+
+      <!-- DASHBOARD -->
+      <a
+        *ngIf="canViewDashboard"
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="navigation-link"
+        matTooltip="Dashboard"
+        [matTooltipDisabled]="!sidebarCollapsed"
+        (click)="closeSidebarOnMobile()">
+
+        <mat-icon>dashboard</mat-icon>
+
+        <span *ngIf="!sidebarCollapsed">
+          Dashboard
+        </span>
+      </a>
+
+      <!-- AUTOMATION HUB -->
+      <section class="navigation-group">
+        <button
+          type="button"
+          class="navigation-group-button"
+          [class.group-active]="isGroupExpanded('automation')"
+          (click)="toggleGroup('automation')"
+          matTooltip="Automation Hub"
+          [matTooltipDisabled]="!sidebarCollapsed">
+
+          <span class="group-button-left">
+            <mat-icon>smart_toy</mat-icon>
+
+            <span *ngIf="!sidebarCollapsed">
+              Automation Hub
+            </span>
+          </span>
+
+          <mat-icon
+            class="expand-icon"
+            *ngIf="!sidebarCollapsed">
+            {{
+            isGroupExpanded('automation')
+            ? 'expand_less'
+            : 'expand_more'
+            }}
+          </mat-icon>
+        </button>
+
+        <div
+          class="navigation-submenu"
+          *ngIf="isGroupExpanded('automation') && !sidebarCollapsed">
+
+          <a
+            routerLink="/automation/document-generator"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>description</mat-icon>
+            <span>Document Generator</span>
+          </a>
+
+          <a
+            routerLink="/automation/pdf-editor"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>picture_as_pdf</mat-icon>
+            <span>PDF Editor</span>
+          </a>
+
+          <a
+            routerLink="/report"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>precision_manufacturing</mat-icon>
+            <span>Automation Reports</span>
+          </a>
+
+          <a
+            routerLink="/automation/bot-monitor"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>monitor_heart</mat-icon>
+            <span>BOT Monitoring</span>
+          </a>
+
+          <a
+            routerLink="/automation/scheduler"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>schedule</mat-icon>
+            <span>BOT Scheduler</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- FINANCE -->
+      <section
+        class="navigation-group"
+        *ngIf="canViewFinance">
+
+        <button
+          type="button"
+          class="navigation-group-button"
+          [class.group-active]="isGroupExpanded('finance')"
+          (click)="toggleGroup('finance')"
+          matTooltip="Finance"
+          [matTooltipDisabled]="!sidebarCollapsed">
+
+          <span class="group-button-left">
+            <mat-icon>account_balance_wallet</mat-icon>
+
+            <span *ngIf="!sidebarCollapsed">
+              Finance
+            </span>
+          </span>
+
+          <mat-icon
+            class="expand-icon"
+            *ngIf="!sidebarCollapsed">
+            {{
+            isGroupExpanded('finance')
+            ? 'expand_less'
+            : 'expand_more'
+            }}
+          </mat-icon>
+        </button>
+
+        <div
+          class="navigation-submenu"
+          *ngIf="isGroupExpanded('finance') && !sidebarCollapsed">
+
+          <!--<a
+            routerLink="/finance/group-billing"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>receipt_long</mat-icon>
+            <span>Group Billing</span>
+          </a>-->
+
+          <a
+            routerLink="/finance/group-billing"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+
+            <mat-icon>receipt_long</mat-icon>
+            <span>Group Billing</span>
+          </a>
+
+          <a
+            routerLink="/finance/tax-invoice"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>request_quote</mat-icon>
+            <span>Tax Invoice</span>
+          </a>
+
+          <a
+            routerLink="/finance/payment-reports"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>payments</mat-icon>
+            <span>Payment Reports</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- HR SERVICES -->
+      <section class="navigation-group">
+        <button
+          type="button"
+          class="navigation-group-button"
+          [class.group-active]="isGroupExpanded('hr')"
+          (click)="toggleGroup('hr')"
+          matTooltip="HR Services"
+          [matTooltipDisabled]="!sidebarCollapsed">
+
+          <span class="group-button-left">
+            <mat-icon>groups</mat-icon>
+
+            <span *ngIf="!sidebarCollapsed">
+              HR Services
+            </span>
+          </span>
+
+          <mat-icon
+            class="expand-icon"
+            *ngIf="!sidebarCollapsed">
+            {{
+            isGroupExpanded('hr')
+            ? 'expand_less'
+            : 'expand_more'
+            }}
+          </mat-icon>
+        </button>
+
+        <div
+          class="navigation-submenu"
+          *ngIf="isGroupExpanded('hr') && !sidebarCollapsed">
+
+          <a
+            routerLink="/hr/apply"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>edit_note</mat-icon>
+            <span>Apply</span>
+          </a>
+
+          <a
+            routerLink="/hr/my-requests"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>assignment</mat-icon>
+            <span>My Requests</span>
+          </a>
+
+          <a
+            *ngIf="canViewManagerInbox"
+            routerLink="/hr/manager-inbox"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>approval</mat-icon>
+            <span>Manager Inbox</span>
+          </a>
+
+          <a
+            *ngIf="canViewHrInbox"
+            routerLink="/hr/hr-inbox"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>business_center</mat-icon>
+            <span>HR Inbox</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- TASK MANAGEMENT -->
+      <a
+        routerLink="/task-board-move"
+        routerLinkActive="active"
+        class="navigation-link"
+        matTooltip="Task Management"
+        [matTooltipDisabled]="!sidebarCollapsed"
+        (click)="closeSidebarOnMobile()">
+
+        <mat-icon>view_kanban</mat-icon>
+
+        <span *ngIf="!sidebarCollapsed">
+          Task Management
+        </span>
+      </a>
+
+      <!-- DOCUMENT CENTER -->
+      <section class="navigation-group">
+        <button
+          type="button"
+          class="navigation-group-button"
+          [class.group-active]="isGroupExpanded('documents')"
+          (click)="toggleGroup('documents')"
+          matTooltip="Document Center"
+          [matTooltipDisabled]="!sidebarCollapsed">
+
+          <span class="group-button-left">
+            <mat-icon>folder_open</mat-icon>
+
+            <span *ngIf="!sidebarCollapsed">
+              Document Center
+            </span>
+          </span>
+
+          <mat-icon
+            class="expand-icon"
+            *ngIf="!sidebarCollapsed">
+            {{
+            isGroupExpanded('documents')
+            ? 'expand_less'
+            : 'expand_more'
+            }}
+          </mat-icon>
+        </button>
+
+        <div
+          class="navigation-submenu"
+          *ngIf="isGroupExpanded('documents') && !sidebarCollapsed">
+
+          <a
+            routerLink="/documents/generated"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>article</mat-icon>
+            <span>Generated Documents</span>
+          </a>
+
+          <a
+            routerLink="/documents/templates"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>library_books</mat-icon>
+            <span>Templates</span>
+          </a>
+
+          <a
+            routerLink="/documents/history"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>history</mat-icon>
+            <span>Document History</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <a
+        routerLink="/reports"
+        routerLinkActive="active"
+        class="navigation-link"
+        matTooltip="Reports and Analytics"
+        [matTooltipDisabled]="!sidebarCollapsed"
+        (click)="closeSidebarOnMobile()">
+
+        <mat-icon>analytics</mat-icon>
+
+        <span *ngIf="!sidebarCollapsed">
+          Reports & Analytics
+        </span>
+      </a>
+
+      <!-- ADMINISTRATION -->
+      <section
+        class="navigation-group"
+        *ngIf="isAdmin">
+
+        <button
+          type="button"
+          class="navigation-group-button"
+          [class.group-active]="isGroupExpanded('administration')"
+          (click)="toggleGroup('administration')"
+          matTooltip="Administration"
+          [matTooltipDisabled]="!sidebarCollapsed">
+
+          <span class="group-button-left">
+            <mat-icon>admin_panel_settings</mat-icon>
+
+            <span *ngIf="!sidebarCollapsed">
+              Administration
+            </span>
+          </span>
+
+          <mat-icon
+            class="expand-icon"
+            *ngIf="!sidebarCollapsed">
+            {{
+            isGroupExpanded('administration')
+            ? 'expand_less'
+            : 'expand_more'
+            }}
+          </mat-icon>
+        </button>
+
+        <div
+          class="navigation-submenu"
+          *ngIf="isGroupExpanded('administration') && !sidebarCollapsed">
+
+          <a
+            routerLink="/userMgmt"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>manage_accounts</mat-icon>
+            <span>User Management</span>
+          </a>
+
+          <a
+            routerLink="/admin/roles"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>badge</mat-icon>
+            <span>Role Management</span>
+          </a>
+
+          <a
+            routerLink="/admin/settings"
+            routerLinkActive="active"
+            (click)="closeSidebarOnMobile()">
+            <mat-icon>settings</mat-icon>
+            <span>System Settings</span>
+          </a>
+        </div>
+      </section>
+    </nav>
+
+    <!-- SIDEBAR FOOTER -->
+    <div class="sidebar-footer">
+      <div
+        class="system-status"
+        [class.collapsed-status]="sidebarCollapsed">
+
+        <span class="status-indicator"></span>
+
+        <div *ngIf="!sidebarCollapsed">
+          <strong>System Online</strong>
+          <span>All services operational</span>
+        </div>
+      </div>
+
+      <div
+        class="version-information"
+        *ngIf="!sidebarCollapsed">
+        SmartBOT v1.0.0
+      </div>
+    </div>
+  </aside>
+
+  <!-- =====================================================
+       MAIN AREA
+  ====================================================== -->
+  <div
+    class="main-area"
+    [class.expanded-main-area]="sidebarCollapsed">
+
+    <!-- HEADER -->
+    <header class="top-header">
+      <div class="header-left">
+
+        <button
+          mat-icon-button
+          type="button"
+          class="mobile-menu-button"
+          (click)="toggleSidebar()"
+          aria-label="Open navigation menu">
+          <mat-icon>menu</mat-icon>
+        </button>
+
+        <div class="page-title-area">
+          <span class="application-label">
+            Enterprise Digital Operations
+          </span>
+
+          <h1>{{ currentPageTitle }}</h1>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="global-search">
+          <mat-icon>search</mat-icon>
+
+          <input
+            type="search"
+            [(ngModel)]="searchText"
+            (keyup.enter)="performSearch()"
+            placeholder="Search modules, documents, reports...">
+
+          <button
+            type="button"
+            *ngIf="searchText"
+            (click)="clearSearch()"
+            aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-actions">
+
+        <!-- ENVIRONMENT -->
+        <div class="environment-badge">
+          <span class="environment-indicator"></span>
+          <span>UAT</span>
+        </div>
+
+        <!-- THEME -->
+        <button
+          mat-icon-button
+          type="button"
+          class="header-action-button"
+          (click)="toggleTheme()"
+          [matTooltip]="
+            selectedTheme === 'dark'
+              ? 'Use light theme'
+              : 'Use dark theme'
+          ">
+          <mat-icon>
+            {{
+            selectedTheme === 'dark'
+            ? 'light_mode'
+            : 'dark_mode'
+            }}
+          </mat-icon>
+        </button>
+
+        <!-- NOTIFICATIONS -->
+        <button
+          mat-icon-button
+          type="button"
+          class="header-action-button notification-button"
+          [matMenuTriggerFor]="notificationMenu"
+          matTooltip="Notifications">
+
+          <mat-icon>notifications_none</mat-icon>
+
+          <span
+            class="notification-count"
+            *ngIf="unreadNotificationCount > 0">
+            {{
+              unreadNotificationCount > 9
+                ? '9+'
+                : unreadNotificationCount
+            }}
+          </span>
+        </button>
+
+        <mat-menu
+          #notificationMenu="matMenu"
+          class="notification-menu-panel">
+
+          <div
+            class="notification-menu-header"
+            (click)="$event.stopPropagation()">
+            <div>
+              <strong>Notifications</strong>
+              <span>{{ unreadNotificationCount }} unread</span>
+            </div>
+
+            <button
+              type="button"
+              (click)="markAllNotificationsRead($event)">
+              Mark all read
+            </button>
+          </div>
+
+          <button
+            mat-menu-item
+            *ngFor="let notification of notifications"
+            class="notification-item"
+            [class.unread-notification]="!notification.read"
+            (click)="openNotification(notification)">
+
+            <mat-icon>
+              {{ notification.icon }}
+            </mat-icon>
+
+            <span class="notification-content">
+              <strong>{{ notification.title }}</strong>
+              <small>{{ notification.message }}</small>
+              <time>{{ notification.time }}</time>
+            </span>
+          </button>
+
+          <div
+            class="empty-notification"
+            *ngIf="notifications.length === 0"
+            (click)="$event.stopPropagation()">
+            <mat-icon>notifications_off</mat-icon>
+            <span>No notifications available</span>
+          </div>
+        </mat-menu>
+
+        <!-- USER PROFILE -->
+        <div class="header-user-profile">
+          <button
+            type="button"
+            class="profile-trigger"
+            [matMenuTriggerFor]="userMenu">
+
+            <div class="profile-image-wrapper">
+              <img
+                *ngIf="
+                  authService.getProfilePictureUrl();
+                  else defaultHeaderProfile
+                "
+                [src]="authService.getProfilePictureUrl()"
+                alt="Profile picture">
+
+              <ng-template #defaultHeaderProfile>
+                <div class="profile-initial">
+                  {{ userInitial }}
+                </div>
+              </ng-template>
+
+              <span class="online-indicator"></span>
+            </div>
+
+            <div class="profile-text">
+              <strong>{{ username || 'SmartBOT User' }}</strong>
+              <span>{{ role || 'User' }}</span>
+            </div>
+
+            <mat-icon class="profile-expand-icon">
+              expand_more
+            </mat-icon>
+          </button>
+
+          <mat-menu #userMenu="matMenu">
+
+            <div
+              class="profile-menu-summary"
+              (click)="$event.stopPropagation()">
+              <strong>{{ username || 'SmartBOT User' }}</strong>
+              <span>{{ role || 'User' }}</span>
+            </div>
+
+            <button
+              mat-menu-item
+              *ngIf="isLoggedIn"
+              (click)="openProfilePictureDialog()">
+              <mat-icon>person</mat-icon>
+              <span>My Profile</span>
+            </button>
+
+            <button
+              mat-menu-item
+              *ngIf="isLoggedIn"
+              routerLink="/profile/settings">
+              <mat-icon>manage_accounts</mat-icon>
+              <span>Account Settings</span>
+            </button>
+
+            <button
+              mat-menu-item
+              *ngIf="!isLoggedIn"
+              (click)="login()">
+              <mat-icon>login</mat-icon>
+              <span>Login</span>
+            </button>
+
+            <button
+              mat-menu-item
+              *ngIf="isLoggedIn"
+              class="logout-menu-item"
+              (click)="logout()">
+              <mat-icon>logout</mat-icon>
+              <span>Logout</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- BREADCRUMB -->
+      <div class="page-toolbar">
+        <div class="breadcrumb">
+          <mat-icon>home</mat-icon>
+          <span>SmartBOT</span>
+          <mat-icon>chevron_right</mat-icon>
+          <strong>{{ currentPageTitle }}</strong>
+        </div>
+
+        <div class="page-toolbar-actions">
+          <button
+            type="button"
+            class="help-button">
+            <mat-icon>help_outline</mat-icon>
+            Help
+          </button>
+        </div>
+      </div>
+
+      <section class="router-content">
+        <router-outlet></router-outlet>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="application-footer">
+      <span>
+        © {{ currentYear }} MCIS Insurance Berhad
+      </span>
+
+      <span>
+        SmartBOT Enterprise Digital Operations Platform
+      </span>
+    </footer>
+  </div>
+</div>

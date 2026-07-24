@@ -1,0 +1,281 @@
+<!-- task-board.component.html -->
+<div class="board-wrapper">
+  <div class="board">
+    <div
+      class="column"
+      *ngFor="let status of statuses"
+      [ngClass]="getStatusClass(status)"
+      [ngStyle]="{ 'background-color': listColorsByStatus[status] || '' }"
+    >
+      <!-- Column Header -->
+      <div class="column-header">
+        <h3>{{ status }}</h3>
+        <button class="list-actions-btn" (click)="toggleListActions(status)">•••</button>
+      </div>
+
+      <!-- List Actions dropdown -->
+      <div *ngIf="openedListActions === status" class="list-actions-menu">
+        <button (click)="addCard(status)"><i class="fas fa-plus"></i> Add card</button>
+        <button (click)="copyList(status)"><i class="fas fa-copy"></i> Copy list</button>
+        <button (click)="moveList(status)"><i class="fas fa-arrows-alt"></i> Move list</button>
+        <button (click)="sortBy(status)"><i class="fas fa-sort"></i> Sort by...</button>
+        <button (click)="watchList(status)"><i class="fas fa-eye"></i> Watch</button>
+        <hr />
+        <div class="color-options">
+          <span
+            *ngFor="let color of listColors"
+            class="color-swatch"
+            [ngStyle]="{ 'background-color': color }"
+            (click)="changeListColor(status, color)"
+          ></span>
+        </div>
+      </div>
+
+      <!-- Add Task Button -->
+      <button class="add-card-btn" (click)="openAddTaskDialog(status)">+ Add a card</button>
+
+      <!-- Task List -->
+      <div
+        class="task-list"
+        cdkDropList
+        [id]="getDropListId(status)"
+        [cdkDropListData]="tasks[status]"
+        [cdkDropListConnectedTo]="connectedDropLists"
+        (cdkDropListDropped)="drop($event, status)"
+      >
+        <div
+          class="task-card"
+          *ngFor="let task of tasks[status]"
+          cdkDrag
+          (click)="openTaskDetailsDialog(task)"
+          (mouseenter)="hoveredTask = task.id"
+          (mouseleave)="hoveredTask = null"
+          [ngStyle]="{ 'background-color': task.color || '' }"
+        >
+          <!-- Title and Inline Edit -->
+          <div *ngIf="editedTask !== task" class="task-title">
+            <span class="circle" [style.background]="task.color || '#ccc'"></span>
+            <span class="task-title-text" (dblclick)="editTaskTitle(task)">
+              {{ task.title }}
+            </span>
+            <button mat-icon-button (click)="openEditDialog(task)" class="edit-icon">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+
+          <div *ngIf="editedTask === task">
+            <input
+              type="text"
+              [(ngModel)]="task.title"
+              (blur)="saveTaskTitle(task)"
+              (keydown.enter)="saveTaskTitle(task)"
+              autofocus
+            />
+          </div>
+
+          <!-- Task Metadata -->
+          <div class="task-meta">
+            <i class="fas fa-eye" title="Watch"></i>
+            <i class="far fa-clock" title="Due Date"></i>
+            <i class="fas fa-align-left" title="Description"></i>
+          </div>
+
+          <!-- Hover Options -->
+          <div class="task-options" *ngIf="hoveredTask === task.id">
+            <button mat-button (click)="watchTask(task)"><i class="fas fa-eye"></i> Watch</button>
+            <button mat-button (click)="openEditDialog(task)"><i class="fas fa-edit"></i> Edit</button>
+            <button mat-button (click)="setDueDate(task)"><i class="fas fa-clock"></i> Due Date</button>
+            <button mat-button (click)="viewDescription(task)"><i class="fas fa-align-left"></i> Description</button>
+            <button mat-button (click)="viewHistory(task)"><i class="fas fa-history"></i> History</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--&lt;!&ndash; Modified task-board.component.html for Trello-style layout &ndash;&gt;-->
+
+<!--<div class="board">-->
+<!--  <div-->
+<!--    class="column"-->
+<!--    *ngFor="let status of statuses"-->
+<!--    [ngClass]="getStatusClass(status)"-->
+<!--    [ngStyle]="{ 'background-color': listColorsByStatus[status] || '' }"-->
+<!--  >-->
+<!--    &lt;!&ndash; Column Header &ndash;&gt;-->
+<!--    <div class="column-header">-->
+<!--      <h3>{{ status }}</h3>-->
+<!--      <button class="list-actions-btn" (click)="toggleListActions(status)">•••</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; List Actions dropdown &ndash;&gt;-->
+<!--    <div *ngIf="openedListActions === status" class="list-actions-menu">-->
+<!--      <button (click)="addCard(status)"><i class="fas fa-plus"></i> Add card</button>-->
+<!--      <button (click)="copyList(status)"><i class="fas fa-copy"></i> Copy list</button>-->
+<!--      <button (click)="moveList(status)"><i class="fas fa-arrows-alt"></i> Move list</button>-->
+<!--      <button (click)="sortBy(status)"><i class="fas fa-sort"></i> Sort by...</button>-->
+<!--      <button (click)="watchList(status)"><i class="fas fa-eye"></i> Watch</button>-->
+<!--      <hr />-->
+<!--      <div class="color-options">-->
+<!--        <span-->
+<!--          *ngFor="let color of listColors"-->
+<!--          class="color-swatch"-->
+<!--          [ngStyle]="{ 'background-color': color }"-->
+<!--          (click)="changeListColor(status, color)"-->
+<!--        ></span>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Add Task Button &ndash;&gt;-->
+<!--    <button class="add-card-btn" (click)="openAddTaskDialog(status)">+ Add a card</button>-->
+
+<!--    &lt;!&ndash; Task List &ndash;&gt;-->
+<!--    <div-->
+<!--      class="task-list"-->
+<!--      cdkDropList-->
+<!--      [id]="getDropListId(status)"-->
+<!--      [cdkDropListData]="tasks[status]"-->
+<!--      [cdkDropListConnectedTo]="connectedDropLists"-->
+<!--      (cdkDropListDropped)="drop($event, status)"-->
+<!--    >-->
+<!--      <div-->
+<!--        class="task-card"-->
+<!--        *ngFor="let task of tasks[status]"-->
+<!--        cdkDrag-->
+<!--        (click)="openTaskDetailsDialog(task)"-->
+<!--        (mouseenter)="hoveredTask = task.id"-->
+<!--        (mouseleave)="hoveredTask = null"-->
+<!--        [ngStyle]="{ 'background-color': task.color || '' }"-->
+<!--      >-->
+<!--        &lt;!&ndash; Title and Inline Edit &ndash;&gt;-->
+<!--        <div *ngIf="editedTask !== task" class="task-title">-->
+<!--          <span class="circle" [style.background]="task.color || '#ccc'"></span>-->
+<!--          <span class="task-title-text" (dblclick)="editTaskTitle(task)">{{ task.title }}</span>-->
+<!--          <button mat-icon-button (click)="openEditDialog(task)" class="edit-icon">-->
+<!--            <mat-icon>edit</mat-icon>-->
+<!--          </button>-->
+<!--        </div>-->
+
+<!--        <div *ngIf="editedTask === task">-->
+<!--          <input-->
+<!--            type="text"-->
+<!--            [(ngModel)]="task.title"-->
+<!--            (blur)="saveTaskTitle(task)"-->
+<!--            (keydown.enter)="saveTaskTitle(task)"-->
+<!--            autofocus-->
+<!--          />-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Task Metadata (Icons like Trello) &ndash;&gt;-->
+<!--        <div class="task-meta">-->
+<!--          <i class="fas fa-eye" title="Watch"></i>-->
+<!--          <i class="far fa-clock" title="Due Date"></i>-->
+<!--          <i class="fas fa-align-left" title="Description"></i>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Hover options &ndash;&gt;-->
+<!--        <div class="task-options" *ngIf="hoveredTask === task.id">-->
+<!--          <button mat-button (click)="watchTask(task)"><i class="fas fa-eye"></i> Watch</button>-->
+<!--          <button mat-button (click)="openEditDialog(task)"><i class="fas fa-edit"></i> Edit</button>-->
+<!--          <button mat-button (click)="setDueDate(task)"><i class="fas fa-clock"></i> Due Date</button>-->
+<!--          <button mat-button (click)="viewDescription(task)"><i class="fas fa-align-left"></i> Description</button>-->
+<!--          <button mat-button (click)="viewHistory(task)"><i class="fas fa-history"></i> History</button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+<!--<div class="board">-->
+<!--  <div-->
+<!--    class="column"-->
+<!--    *ngFor="let status of statuses"-->
+<!--    [ngClass]="getStatusClass(status)"-->
+<!--    [ngStyle]="{ 'background-color': listColorsByStatus[status] || '' }"-->
+<!--  >-->
+<!--    <div class="column-header">-->
+<!--      <h3>{{ status }}</h3>-->
+<!--      <button class="list-actions-btn" (click)="toggleListActions(status)">•••</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; List Actions dropdown &ndash;&gt;-->
+<!--    <div *ngIf="openedListActions === status" class="list-actions-menu">-->
+<!--      <button (click)="addCard(status)">Add card</button>-->
+<!--      <button (click)="copyList(status)">Copy list</button>-->
+<!--      <button (click)="moveList(status)">Move list</button>-->
+<!--      <button (click)="sortBy(status)">Sort by...</button>-->
+<!--      <button (click)="watchList(status)">Watch</button>-->
+<!--      <hr />-->
+<!--      &lt;!&ndash; Color options &ndash;&gt;-->
+<!--      <div class="color-options">-->
+<!--        <span-->
+<!--          *ngFor="let color of listColors"-->
+<!--          class="color-swatch"-->
+<!--          [ngStyle]="{ 'background-color': color }"-->
+<!--          (click)="changeListColor(status, color)"-->
+<!--        ></span>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Add Task Button &ndash;&gt;-->
+<!--    <button class="add-item" (click)="openAddTaskDialog(status)">+ Add Task</button>-->
+
+<!--    &lt;!&ndash; Task List &ndash;&gt;-->
+<!--    <div-->
+<!--      class="task-list"-->
+<!--      cdkDropList-->
+<!--      [id]="getDropListId(status)"-->
+<!--      [cdkDropListData]="tasks[status]"-->
+<!--      [cdkDropListConnectedTo]="connectedDropLists"-->
+<!--      (cdkDropListDropped)="drop($event, status)"-->
+<!--    >-->
+<!--      <div-->
+<!--        class="task-card"-->
+<!--        *ngFor="let task of tasks[status]"-->
+<!--        cdkDrag-->
+<!--        (mouseenter)="hoveredTask = task.id"-->
+<!--        (mouseleave)="hoveredTask = null"-->
+<!--        [ngStyle]="{ 'background-color': task.color || '' }"-->
+<!--      >-->
+<!--        &lt;!&ndash; Title and Inline Edit &ndash;&gt;-->
+<!--        <div *ngIf="editedTask !== task" class="task-title">-->
+<!--          <span class="circle" [style.background]="task.color || '#ccc'"></span>-->
+<!--          <span (dblclick)="editTaskTitle(task)">-->
+<!--            {{ task.title }}-->
+<!--          </span>-->
+<!--          <button mat-icon-button (click)="openEditDialog(task)" class="edit-icon">-->
+<!--            <mat-icon>edit</mat-icon>-->
+<!--          </button>-->
+<!--        </div>-->
+
+<!--        <div *ngIf="editedTask === task">-->
+<!--          <input-->
+<!--            type="text"-->
+<!--            [(ngModel)]="task.title"-->
+<!--            (blur)="saveTaskTitle(task)"-->
+<!--            (keydown.enter)="saveTaskTitle(task)"-->
+<!--            autofocus-->
+<!--          />-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Task Metadata &ndash;&gt;-->
+<!--        <div class="task-meta">-->
+<!--          <mat-icon>access_time</mat-icon>-->
+<!--          <span>{{ task.due_date | date: 'mediumDate' }}</span>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Hover options &ndash;&gt;-->
+<!--        <div class="task-options" *ngIf="hoveredTask === task.id">-->
+<!--          <button mat-button (click)="watchTask(task)">👁️ Watch</button>-->
+<!--          <button mat-button (click)="openEditDialog(task)">✏️ Edit</button>-->
+<!--          <button mat-button (click)="setDueDate(task)">⏰ Due Date</button>-->
+<!--          <button mat-button (click)="viewDescription(task)">📝 Description</button>-->
+<!--          <button mat-button (click)="viewHistory(task)">📜 History</button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->

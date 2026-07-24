@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden !important; /* ✅ Prevents global scrollbar */
+}
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+body.light-theme {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+body.dark-theme {
+  background-color: #121212;
+  color: #f0f0f0;
+}
+
+/* Sidebar */
+body.dark-theme .sidebar {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+}
+body.light-theme .sidebar {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+/* Header */
+body.dark-theme .header {
+  background-color: #1f1f1f;
+  color: #f0f0f0;
+}
+body.light-theme .header {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+/* Main content */
+body.dark-theme .main-content,
+body.dark-theme .page-content {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+}
+body.light-theme .main-content,
+body.light-theme .page-content {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+/* Menus, dropdowns, etc. */
+body.dark-theme .mat-menu-panel {
+  background-color: #2e2e2e !important;
+  color: #ffffff;
+}

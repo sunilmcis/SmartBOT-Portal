@@ -1,0 +1,24 @@
+<h2>Submit Resignation</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Reason</mat-label>
+    <textarea matInput rows="4" formControlName="reason"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Requested Last Working Day</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="requestedLastDay">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Additional comments</mat-label>
+    <textarea matInput rows="2" formControlName="commentsEmployee"></textarea>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+    Submit
+  </button>
+</form>
